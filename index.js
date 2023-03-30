@@ -1,36 +1,80 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const app = express();
+const mongoose = require('mongoose');
+const cloudinary = require('cloudinary').v2;
+const fileUpload = require('express-fileupload');
 
-let notes = [
-    {
-        id: 1,
-        content: 'HTML is easy',
-        date: '2019-05-30T17:30:31.098Z',
-        important: true
-    },
-    {
-        id: 2,
-        content: 'Browser can execute only Javascript',
-        date: '2019-05-30T18:39:34.091Z',
-        important: false
-    },
-    {
-        id: 3,
-        content: 'GET and POST are the most important methods of HTTP protocol',
-        date: '2019-05-30T19:20:14.298Z',
-        important: true
-    }
-];
+//models
+const Team = require('./models/Team');
+
+const app = express();
+app.use(fileUpload({
+    useTempFiles: true,
+    limits: { fileSize: 5 * 2024 * 1024 }
+}));
+
+const connectionString = `mongodb+srv://admin:${process.env.PASSWORD}@cluster0.8eqwb.mongodb.net/futbol-app?retryWrites=true&w=majority`;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+mongoose.connect(
+    connectionString, { useNewUrlParser: true })
+    .then(() => console.log('connected'))
+    .catch(e => console.log(e));
 
 app.use(cors());
 app.use(express.json());
+
+
+
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>');
 });
 
-app.get('/api/notes', (request, response) => {
-    response.json(notes);
+
+
+app.post('/upload', async (req, res) => {
+    const file = req.files.image;
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+        public_id: `${Date.now()}`,
+        resource_type: 'auto',
+        folder: 'football-app'
+    });
+    res.json(result);
+});
+
+app.post('/add-team', async (req, res) => {
+    const file = req.files.crest;
+
+    const image = await cloudinary.uploader.upload(file.tempFilePath, {
+        public_id: `${Date.now()}`,
+        resource_type: 'auto',
+        folder: 'football-app'
+    });
+    console.log(image);
+
+    const team = new Team({
+        name: req.body.name,
+        imgUrl: image.url,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        ties: 0,
+        loses: 0,
+        games: 0,
+        wins: 0,
+        goalDifference: 0,
+        points: 0,
+        lastFiveGames: [],
+        gameHistory: [],
+    });
+
+    const productStored = await team.save();
+    res.json({ productStored });
 });
 
 app.use((request, response) => {
