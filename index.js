@@ -48,7 +48,20 @@ app.post('/upload', async (req, res) => {
     res.json(result);
 });
 
-app.post('/add-team', async (req, res) => {
+
+
+app.get('/teams', async (req, res) => {
+    Team.find({}).then(teams => {
+        if (teams) {
+            console.log(teams);
+            res.json(teams);
+        } else {
+            return res.json({ message: 'Error' });
+        }
+    });
+});
+
+app.post('/teams', async (req, res) => {
     const file = req.files.crest;
 
     const image = await cloudinary.uploader.upload(file.tempFilePath, {
@@ -67,9 +80,6 @@ app.post('/add-team', async (req, res) => {
         loses: 0,
         games: 0,
         wins: 0,
-        goalDifference: 0,
-        points: 0,
-        lastFiveGames: [],
         gameHistory: [],
     });
 

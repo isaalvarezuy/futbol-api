@@ -10,9 +10,6 @@ const TeamSchema = new Schema({
     loses: Number,
     games: Number,
     wins: Number,
-    goalDifference: Number,
-    points: Number,
-    lastFiveGames: Array,
     gameHistory: Array,
 });
 
