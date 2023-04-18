@@ -9,6 +9,10 @@ const fileUpload = require('express-fileupload');
 const Team = require('./models/Team');
 const Player = require('./models/Player');
 
+//middlewares
+const notFound = require('./middleware/notFound');
+const handleErrors = require('./middleware/handleErrors');
+
 const app = express();
 app.use(fileUpload({
     useTempFiles: true,
@@ -33,9 +37,10 @@ app.use(express.json());
 
 
 
-app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>');
+app.get('/', (req, res) => {
+    res.send('<h1>Hello World!</h1>');
 });
+
 
 
 app.get('/teams', async (req, res) => {
@@ -46,6 +51,21 @@ app.get('/teams', async (req, res) => {
             return res.json({ message: 'Error' });
         }
     });
+});
+
+app.get('/teams/:id', async (req, res, next) => {
+    const id = req.params.id;
+
+
+    const team = await Team.findById(id).then(team => {
+        if (team) {
+            return res.json(team);
+        } else {
+            return res.status(404).end();
+        }
+    }).catch((err) =>
+        next(err)
+    );
 });
 
 app.post('/teams', async (req, res) => {
@@ -74,8 +94,7 @@ app.post('/teams', async (req, res) => {
 });
 
 app.post('/players', async (req, res) => {
-    console.log(req.body);
-    console.log(req.files);
+
     const file = req.files.photo;
 
     const image = await cloudinary.uploader.upload(file.tempFilePath, {
@@ -83,7 +102,6 @@ app.post('/players', async (req, res) => {
         resource_type: 'auto',
         folder: 'football-app'
     });
-    console.log(image);
 
     const { name, teamId, number } = req.body;
     const player = new Player({
@@ -99,10 +117,11 @@ app.post('/players', async (req, res) => {
 });
 
 
-app.use((request, response) => {
-    response.status(404).json({ error: 'Not found' });
 
-});
+app.use(notFound);
+app.use(handleErrors);
+
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
