@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 
 //models
 const Team = require('./models/Team');
+const Player = require('./models/Player');
 
 const app = express();
 app.use(fileUpload({
@@ -37,23 +38,9 @@ app.get('/', (request, response) => {
 });
 
 
-
-app.post('/upload', async (req, res) => {
-    const file = req.files.image;
-    const result = await cloudinary.uploader.upload(file.tempFilePath, {
-        public_id: `${Date.now()}`,
-        resource_type: 'auto',
-        folder: 'football-app'
-    });
-    res.json(result);
-});
-
-
-
 app.get('/teams', async (req, res) => {
     Team.find({}).then(teams => {
         if (teams) {
-            console.log(teams);
             res.json(teams);
         } else {
             return res.json({ message: 'Error' });
@@ -69,7 +56,6 @@ app.post('/teams', async (req, res) => {
         resource_type: 'auto',
         folder: 'football-app'
     });
-    console.log(image);
 
     const team = new Team({
         name: req.body.name,
@@ -86,6 +72,32 @@ app.post('/teams', async (req, res) => {
     const productStored = await team.save();
     res.json({ productStored });
 });
+
+app.post('/players', async (req, res) => {
+    console.log(req.body);
+    console.log(req.files);
+    const file = req.files.photo;
+
+    const image = await cloudinary.uploader.upload(file.tempFilePath, {
+        public_id: `${Date.now()}`,
+        resource_type: 'auto',
+        folder: 'football-app'
+    });
+    console.log(image);
+
+    const { name, teamId, number } = req.body;
+    const player = new Player({
+        name,
+        imgUrl: image.url,
+        teamId,
+        goals: 0,
+        number,
+    });
+
+    const playerSaved = await player.save();
+    res.json({ playerSaved });
+});
+
 
 app.use((request, response) => {
     response.status(404).json({ error: 'Not found' });
