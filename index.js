@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 const fileUpload = require('express-fileupload');
+const bodyParser = require('body-parser');
 
 //models
 const Team = require('./models/Team');
@@ -32,8 +33,10 @@ mongoose.connect(
     .then(() => console.log('connected'))
     .catch(e => console.log(e));
 
+
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.text());
 
 
 
@@ -55,9 +58,7 @@ app.get('/teams', async (req, res) => {
 
 app.get('/teams/:id', async (req, res, next) => {
     const id = req.params.id;
-
-
-    const team = await Team.findById(id).then(team => {
+    Team.findById(id).then(team => {
         if (team) {
             return res.json(team);
         } else {
@@ -91,6 +92,33 @@ app.post('/teams', async (req, res) => {
 
     const productStored = await team.save();
     res.json({ productStored });
+});
+
+/* app.delete('/teams/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deletedTeam = await Team.findByIdAndRemove(id);
+        console.log(deletedTeam);
+        if (!deletedTeam) {
+            return res.status(404).end();
+        }
+        res.status(204).end(); // 204: No Content
+    } catch (error) {
+        next(error);
+    }
+}); */
+
+app.delete('/teams/:id', (req, res, next) => {
+    const id = req.params.id;
+    Team.findByIdAndRemove(id).then(team => {
+        if (!team) {
+            res.status(404).end();
+        }
+        res.json(team);
+        res.status(204).end();
+    }
+    ).catch(err => next(err));
+
 });
 
 app.post('/players', async (req, res) => {
