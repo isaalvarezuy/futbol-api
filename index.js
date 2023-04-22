@@ -94,19 +94,7 @@ app.post('/teams', async (req, res) => {
     res.json({ productStored });
 });
 
-/* app.delete('/teams/:id', async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const deletedTeam = await Team.findByIdAndRemove(id);
-        console.log(deletedTeam);
-        if (!deletedTeam) {
-            return res.status(404).end();
-        }
-        res.status(204).end(); // 204: No Content
-    } catch (error) {
-        next(error);
-    }
-}); */
+
 
 app.delete('/teams/:id', (req, res, next) => {
     const id = req.params.id;
@@ -119,6 +107,16 @@ app.delete('/teams/:id', (req, res, next) => {
     }
     ).catch(err => next(err));
 
+});
+
+app.get('/players', async (req, res) => {
+    Player.find({}).then(teams => {
+        if (teams) {
+            res.json(teams);
+        } else {
+            return res.json({ message: 'Error' });
+        }
+    });
 });
 
 app.post('/players', async (req, res) => {
