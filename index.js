@@ -58,7 +58,7 @@ app.get('/teams', async (req, res) => {
 
 app.get('/teams/:id', async (req, res, next) => {
     const id = req.params.id;
-    Team.findById(id).then(team => {
+    Team.findById(id).populate('players').then(team => {
         if (team) {
             return res.json(team);
         } else {
@@ -110,9 +110,9 @@ app.delete('/teams/:id', (req, res, next) => {
 });
 
 app.get('/players', async (req, res) => {
-    Player.find({}).then(teams => {
-        if (teams) {
-            res.json(teams);
+    Player.find({}).populate('team').then(players => {
+        if (players) {
+            res.json(players);
         } else {
             return res.json({ message: 'Error' });
         }
@@ -130,16 +130,26 @@ app.post('/players', async (req, res) => {
     });
 
     const { name, teamId, number } = req.body;
+
+
     const player = new Player({
         name,
         imgUrl: image.url,
-        teamId,
+        team: teamId,
         goals: 0,
         number,
     });
 
     const playerSaved = await player.save();
+
+    await Team.findByIdAndUpdate(
+        teamId,
+        { $push: { players: playerSaved._id } },
+        { new: true }
+    ).then(team => console.log(team));
+
     res.json({ playerSaved });
+
 });
 
 

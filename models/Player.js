@@ -4,7 +4,10 @@ const { Schema, model } = mongoose;
 const PlayerSchema = new Schema({
     name: String,
     imgUrl: String,
-    teamId: String,
+    team: {
+        type: Schema.Types.ObjectId,
+        ref: 'Team'
+    },
     goals: Number,
     number: Number,
 });

@@ -11,6 +11,12 @@ const TeamSchema = new Schema({
     games: Number,
     wins: Number,
     gameHistory: Array,
+    players: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Player'
+        }
+    ],
 });
 
 
