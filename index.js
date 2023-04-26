@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 //controllers
 const teamsRouter = require('./controllers/teams');
 const playersRouter = require('./controllers/players');
+const gamesRouter = require('./controllers/games');
 
 
 //middlewares
@@ -31,6 +32,9 @@ mongoose.connect(
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.text());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 
 
@@ -40,6 +44,7 @@ app.get('/', (req, res) => {
 
 app.use('/teams', teamsRouter);
 app.use('/players', playersRouter);
+app.use('/games', gamesRouter);
 
 
 
