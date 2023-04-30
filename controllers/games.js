@@ -13,7 +13,6 @@ gamesRouter.post('/', async (req, res) => {
 
 
     for (let scorer of scorers) {
-        console.log(scorer);
         const player = await Player.findById(scorer.player);
         player.goals += scorer.amount;
         player.save();

@@ -4,7 +4,13 @@ const Team = require('../models/Team');
 const cloudinary = require('./cloudinary');
 
 teamsRouter.get('/', async (req, res) => {
-    Team.find({}).then(teams => {
+    Team.find({}).populate({
+        path: 'players',
+        select: '-team'
+    }).populate({
+        path: 'gameHistory.opponent',
+        select: 'name'
+    }).then(teams => {
         if (teams) {
             res.json(teams);
         } else {

@@ -42,8 +42,8 @@ app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>');
 });
 
-app.use('/teams', teamsRouter);
 app.use('/players', playersRouter);
+app.use('/teams', teamsRouter);
 app.use('/games', gamesRouter);
 
 

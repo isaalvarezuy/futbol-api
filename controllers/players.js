@@ -5,7 +5,7 @@ const Team = require('../models/Team');
 const cloudinary = require('./cloudinary');
 
 playersRouter.get('/', async (req, res) => {
-    Player.find({}).populate('team').then(players => {
+    Player.find({}).then(players => {
         if (players) {
             res.json(players);
         } else {
@@ -13,6 +13,7 @@ playersRouter.get('/', async (req, res) => {
         }
     });
 });
+
 
 playersRouter.post('/', async (req, res) => {
 
