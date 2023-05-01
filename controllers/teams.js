@@ -1,5 +1,6 @@
 const teamsRouter = require('express').Router();
 const Team = require('../models/Team');
+const Player = require('../models/Player');
 
 const cloudinary = require('./cloudinary');
 
@@ -47,7 +48,13 @@ teamsRouter.post('/', async (req, res) => {
 
 teamsRouter.get('/:id', async (req, res, next) => {
     const id = req.params.id;
-    Team.findById(id).populate('players').then(team => {
+    Team.findById(id).populate({
+        path: 'players',
+        select: '-team'
+    }).populate({
+        path: 'gameHistory.opponent',
+        select: 'name imgUrl'
+    }).then(team => {
         if (team) {
             return res.json(team);
         } else {
@@ -64,6 +71,13 @@ teamsRouter.delete('/:id', (req, res, next) => {
         if (!team) {
             res.status(404).end();
         }
+
+        Player.deleteMany({ team: id }).then(
+            r => {
+                console.log('entro');
+                console.log(r);
+            }
+        ).catch(err => console.log(err));
         res.json(team);
         res.status(204).end();
     }
