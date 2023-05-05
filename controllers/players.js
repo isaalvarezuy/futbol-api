@@ -50,4 +50,14 @@ playersRouter.post('/', userExtractor, async (req, res) => {
 });
 
 
+playersRouter.delete('/:id', (req, res, next) => {
+    const id = req.params.id;
+    Player.findByIdAndRemove(id).then(player => {
+        res.status(200);
+        res.json(player);
+    }).catch((err) =>
+        next(err));
+});
+
+
 module.exports = playersRouter;
