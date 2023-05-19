@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const teamsRouter = require('./controllers/teams');
 const playersRouter = require('./controllers/players');
 const gamesRouter = require('./controllers/games');
+const usersRouter = require('./controllers/users');
+
 
 
 //middlewares
@@ -45,6 +47,7 @@ app.get('/', (req, res) => {
 app.use('/players', playersRouter);
 app.use('/teams', teamsRouter);
 app.use('/games', gamesRouter);
+app.use('/users', usersRouter);
 
 
 
