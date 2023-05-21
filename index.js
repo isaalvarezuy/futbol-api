@@ -10,6 +10,7 @@ const teamsRouter = require('./controllers/teams');
 const playersRouter = require('./controllers/players');
 const gamesRouter = require('./controllers/games');
 const usersRouter = require('./controllers/users');
+const loginRouter = require('./controllers/login');
 
 
 
@@ -48,6 +49,7 @@ app.use('/players', playersRouter);
 app.use('/teams', teamsRouter);
 app.use('/games', gamesRouter);
 app.use('/users', usersRouter);
+app.use('/login', loginRouter);
 
 
 

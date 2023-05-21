@@ -2,7 +2,9 @@ const teamsRouter = require('express').Router();
 const Team = require('../models/Team');
 const Player = require('../models/Player');
 
+
 const cloudinary = require('./cloudinary');
+const userExtractor = require('../middleware/userExtractor');
 
 teamsRouter.get('/', async (req, res) => {
     Team.find({}).populate({
@@ -20,7 +22,7 @@ teamsRouter.get('/', async (req, res) => {
     });
 });
 
-teamsRouter.post('/', async (req, res) => {
+teamsRouter.post('/', userExtractor, async (req, res, next) => {
 
     const file = req.files.crest;
 
@@ -42,8 +44,13 @@ teamsRouter.post('/', async (req, res) => {
         gameHistory: [],
     });
 
-    const productStored = await team.save();
-    res.json({ productStored });
+
+    try {
+        const savedTeam = await team.save();
+        res.json(savedTeam);
+    } catch (error) {
+        next(error);
+    }
 });
 
 teamsRouter.get('/:id', async (req, res, next) => {
@@ -74,7 +81,6 @@ teamsRouter.delete('/:id', (req, res, next) => {
 
         Player.deleteMany({ team: id }).then(
             r => {
-                console.log('entro');
                 console.log(r);
             }
         ).catch(err => console.log(err));
