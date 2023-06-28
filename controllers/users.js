@@ -27,8 +27,18 @@ usersRouter.post('/', async (req, res) => {
         { expiresIn: 60 * 60 * 24 * 7 });
 
     res.send({ username, token });
+});
 
-
-
+usersRouter.put('/:username', async (req, res, next) => {
+    console.log(req.params.username);
+    console.log(req.body.teamId);
+    const username = req.params.username;
+    const teamId = req.body.teamId;
+    try {
+        const user = await User.findOneAndUpdate({ username }, { team: teamId }, { new: true });
+        res.send(user);
+    } catch (error) {
+        next(error);
+    }
 });
 module.exports = usersRouter;
