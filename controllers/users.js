@@ -30,8 +30,6 @@ usersRouter.post('/', async (req, res) => {
 });
 
 usersRouter.put('/:username', async (req, res, next) => {
-    console.log(req.params.username);
-    console.log(req.body.teamId);
     const username = req.params.username;
     const teamId = req.body.teamId;
     try {
