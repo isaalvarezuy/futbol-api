@@ -39,4 +39,20 @@ usersRouter.put('/:username', async (req, res, next) => {
         next(error);
     }
 });
+usersRouter.get('/:userId', async (req, res, next) => {
+    const id = req.params.userId;
+    console.log('entro' + id);
+
+    User.findById(id).populate({
+        path: 'team',
+        select: '-players'
+    }).then(user => {
+        if (user) {
+            res.json(user);
+        } else {
+            return res.json({ message: 'Error' });
+        }
+    });
+
+});
 module.exports = usersRouter;
