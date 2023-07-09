@@ -2,9 +2,9 @@ const gamesRouter = require('express').Router();
 const Game = require('../models/Game');
 const Team = require('../models/Team');
 const Player = require('../models/Player');
+const userExtractor = require('../middleware/userExtractor');
 
-gamesRouter.post('/', async (req, res) => {
-
+gamesRouter.post('/', userExtractor, async (req, res) => {
 
     const { teamOneId, teamTwoId, teamOneGoals, teamTwoGoals, teamOneGoalScorers, teamTwoGoalScorers } = req.body;
 
@@ -72,15 +72,7 @@ gamesRouter.post('/', async (req, res) => {
     await teamOne.save();
     await teamTwo.save();
 
-    /*  if (req.body.r1 > req.body.r2) {
-        Equipo.findByIdAndUpdate(req.body.e1, { $inc: { pj: 1, pg: 1, gf: req.body.r1, gc: req.body.r2 }, historico: [...req.body.his1, "g"], hisGF: [...req.body.gf1, req.body.r1], hisGC: [...req.body.gc1, req.body.r2], vs: [...req.body.vs1, req.body.e2] }, { new: true }, (err, eq1) => {
-            if (err) return res.json({ mensaje: "Error al modificar" });
-            Equipo.findByIdAndUpdate(req.body.e2, { $inc: { pj: 1, pp: 1, gf: req.body.r2, gc: req.body.r1 }, historico: [...req.body.his2, "p"], hisGF: [...req.body.gf2, req.body.r2], hisGC: [...req.body.gc2, req.body.r1], vs: [...req.body.vs2, req.body.e1] }, { new: true }, (err, eq2) => {
-                if (err) return res.json({ mensaje: "Error al modificar" });
-                res.json([eq1, eq2]);
-            })
-        })
-    } */
+
     res.send(req.body);
 
 });

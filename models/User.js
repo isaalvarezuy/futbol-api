@@ -4,10 +4,14 @@ const { Schema, model } = mongoose;
 const UserSchema = new Schema({
     username: String,
     passwordHash: String,
+    team: {
+        type: Schema.Types.ObjectId,
+        ref: 'Team'
+    },
 });
 
 UserSchema.set('toJSON', {
-    trasnform: (document, returnedObject) => {
+    transform: (document, returnedObject) => {
         delete returnedObject.passwordHash;
     }
 });

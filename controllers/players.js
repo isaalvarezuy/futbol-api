@@ -3,8 +3,9 @@ const Player = require('../models/Player');
 const Team = require('../models/Team');
 
 const cloudinary = require('./cloudinary');
+const userExtractor = require('../middleware/userExtractor');
 
-playersRouter.get('/', async (req, res) => {
+playersRouter.get('/', userExtractor, async (req, res) => {
     Player.find({}).then(players => {
         if (players) {
             res.json(players);
@@ -15,7 +16,7 @@ playersRouter.get('/', async (req, res) => {
 });
 
 
-playersRouter.post('/', async (req, res) => {
+playersRouter.post('/', userExtractor, async (req, res) => {
 
     const file = req.files.photo;
 

@@ -6,7 +6,7 @@ const Player = require('../models/Player');
 const cloudinary = require('./cloudinary');
 const userExtractor = require('../middleware/userExtractor');
 
-teamsRouter.get('/', async (req, res) => {
+teamsRouter.get('/', userExtractor, async (req, res) => {
     Team.find({}).populate({
         path: 'players',
         select: '-team'
@@ -53,7 +53,7 @@ teamsRouter.post('/', userExtractor, async (req, res, next) => {
     }
 });
 
-teamsRouter.get('/:id', async (req, res, next) => {
+teamsRouter.get('/:id', userExtractor, async (req, res, next) => {
     const id = req.params.id;
     Team.findById(id).populate({
         path: 'players',
@@ -72,7 +72,7 @@ teamsRouter.get('/:id', async (req, res, next) => {
     );
 });
 
-teamsRouter.delete('/:id', (req, res, next) => {
+teamsRouter.delete('/:id', userExtractor, (req, res, next) => {
     const id = req.params.id;
     Team.findByIdAndRemove(id).then(team => {
         if (!team) {
