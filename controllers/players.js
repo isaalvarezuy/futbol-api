@@ -35,6 +35,7 @@ playersRouter.post('/', userExtractor, async (req, res) => {
         team: teamId,
         goals: 0,
         number,
+        isDeleted: false
     });
 
     const playerSaved = await player.save();

@@ -10,6 +10,15 @@ const PlayerSchema = new Schema({
     },
     goals: Number,
     number: Number,
+    isDeleted: Boolean
+});
+
+PlayerSchema.pre('find', function () {
+    this.where({ isDeleted: false });
+});
+
+PlayerSchema.pre('findOne', function () {
+    this.where({ isDeleted: false });
 });
 
 module.exports = model('Player', PlayerSchema);
